@@ -53,3 +53,11 @@ Run the container:
 ```bash
 docker-compose up
 ```
+
+## ✅ Running Tests
+
+To run the unit tests with Python's built-in unittest module:
+
+```bash
+python -m unittest
+```
