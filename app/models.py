@@ -8,8 +8,6 @@ class Account(Base):
     id = Column(String, primary_key=True, index=True)
     balance = Column(Integer, nullable=False, default=0)
 
-
-
 class Event(BaseModel):
     type: str
     destination: str = None
