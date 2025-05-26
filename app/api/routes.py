@@ -1,4 +1,4 @@
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from fastapi import APIRouter, Body, Depends, Query
 from sqlalchemy.orm import Session
 
@@ -19,11 +19,7 @@ router = APIRouter()
 def reset_db(db: Session = Depends(get_db)):
     
     handle_reset(db)
-    return JSONResponse(
-        status_code=200,
-        content="OK"
-    )
-
+    return Response(content="OK", media_type="text/plain")
 
 @router.get("/balance")
 def balance(account_id: str = Query(...), db: Session = Depends(get_db)):
