@@ -1,5 +1,5 @@
 from fastapi.responses import JSONResponse
-from fastapi import APIRouter, Body, Depends, HTTPException, Query
+from fastapi import APIRouter, Body, Depends, Query
 from sqlalchemy.orm import Session
 
 from app.core import (
@@ -29,7 +29,7 @@ def reset_db(db: Session = Depends(get_db)):
 def balance(account_id: str = Query(...), db: Session = Depends(get_db)):
     account = handle_balance(account_id, db)
     if not account:
-        raise HTTPException(status_code=404, detail=0)
+        return JSONResponse(content=0, status_code=404)
 
 
     return JSONResponse(
@@ -40,18 +40,18 @@ def balance(account_id: str = Query(...), db: Session = Depends(get_db)):
 @router.post("/event")
 def handle_event(event: BankEvent = Body(..., discriminator='type'), db: Session = Depends(get_db)):
 
-    data = None
+    res = None
     if isinstance(event, DepositEvent):
-        data = handle_deposit(event.destination, event.amount, db)
+        res = handle_deposit(event.destination, event.amount, db)
     elif isinstance(event, WithdrawEvent):
-        data = handle_withdraw(event.origin, event.amount, db)
+        res = handle_withdraw(event.origin, event.amount, db)
     elif isinstance(event, TransferEvent):
-        data = handle_transfer(event.origin, event.destination, event.amount, db)
+        res = handle_transfer(event.origin, event.destination, event.amount, db)
     
-    if data:
+    if res:
         return JSONResponse(
             status_code=201,
-            content=data
+            content=res
         )
 
-    raise HTTPException(status_code=400, detail="Invalid event")
+    return JSONResponse(content=0, status_code=404)

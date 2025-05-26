@@ -1,11 +1,9 @@
 
-from fastapi import HTTPException
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.database import Base, engine
 from app.models import Account, Base
-
 
 
 def handle_reset(db):
@@ -37,7 +35,7 @@ def handle_withdraw(account_id: str, amount: int, db: Session):
     account = db.query(Account).filter(Account.id == account_id).first()
 
     if not account or account.balance < amount:
-        raise HTTPException(status_code=404, detail="0")
+        return 
 
     account.balance -= amount
     db.commit()
@@ -49,7 +47,7 @@ def handle_transfer(origin_id: str, destination_id: str, amount: int, db: Sessio
     origin = db.query(Account).filter(Account.id == origin_id).first()
 
     if not origin or origin.balance < amount:
-        raise HTTPException(status_code=404, detail="0")
+        return
 
     destination = db.query(Account).filter(Account.id == destination_id).first()
 
